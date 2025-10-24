@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">← Back to List</button>
+    <h1>My Favorites</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading favorites...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && favoriteEmployees.length === 0" class="no-favorites">
+    <p>You haven't favorited any employees yet.</p>
+    <p>Go to the <a routerLink="/">employee list</a> and click the star icon to add favorites!</p>
+  </div>
+
+  <div *ngIf="!loading && !error && favoriteEmployees.length > 0" class="employee-grid">
+    <div
+      *ngFor="let employee of favoriteEmployees"
+      class="employee-card"
+      (click)="viewDetails(employee.id)"
+    >
+      <div class="employee-header">
+        <img [src]="employee.pictureUrl" [alt]="employee.firstName + ' ' + employee.lastName" class="employee-photo" />
+        <button
+          class="favorite-btn favorited"
+          (click)="toggleFavorite($event, employee.id)"
+          aria-label="Remove from favorites"
+        >
+          ★
+        </button>
+      </div>
+      <div class="employee-info">
+        <h3>{{ employee.firstName }} {{ employee.lastName }}</h3>
+        <p class="employee-email">{{ employee.email }}</p>
+        <p class="employee-phone">{{ employee.phone }}</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="container">
+  <h1>Employee Dashboard</h1>
+  
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange()"
+      placeholder="Search by first or last name..."
+      class="search-input"
+    />
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading employees...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="employee-grid">
+    <div
+      *ngFor="let employee of filteredEmployees"
+      class="employee-card"
+      (click)="viewDetails(employee.id)"
+    >
+      <div class="employee-header">
+        <img [src]="employee.pictureUrl" [alt]="employee.firstName + ' ' + employee.lastName" class="employee-photo" />
+        <button
+          class="favorite-btn"
+          [class.favorited]="isFavorite(employee.id)"
+          (click)="toggleFavorite($event, employee.id)"
+          [attr.aria-label]="isFavorite(employee.id) ? 'Remove from favorites' : 'Add to favorites'"
+        >
+          {{ isFavorite(employee.id) ? '★' : '☆' }}
+        </button>
+      </div>
+      <div class="employee-info">
+        <h3>{{ employee.firstName }} {{ employee.lastName }}</h3>
+        <p class="employee-email">{{ employee.email }}</p>
+        <p class="employee-phone">{{ employee.phone }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !error && filteredEmployees.length === 0" class="no-results">
+    No employees found matching "{{ searchTerm }}"
+  </div>
+</div>

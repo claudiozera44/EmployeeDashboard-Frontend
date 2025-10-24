@@ -1,0 +1,90 @@
+<div class="container">
+  <button class="back-btn" (click)="goBack()">← Back to List</button>
+
+  <div *ngIf="loading" class="loading">Loading employee details...</div>
+
+  <div *ngIf="error && !loading" class="error">{{ error }}</div>
+
+  <div *ngIf="employee && !loading" class="detail-container">
+    <div class="employee-header">
+      <img [src]="employee.pictureUrl" [alt]="employee.firstName + ' ' + employee.lastName" class="employee-photo" />
+      <div class="employee-main-info">
+        <h1>{{ employee.firstName }} {{ employee.lastName }}</h1>
+        <button
+          class="favorite-btn-large"
+          [class.favorited]="isFavorite()"
+          (click)="toggleFavorite()"
+        >
+          {{ isFavorite() ? '★ Remove from Favorites' : '☆ Add to Favorites' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h2>Contact Information</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Email:</strong> {{ employee.email }}
+        </div>
+        <div class="info-item">
+          <strong>Phone:</strong> {{ employee.phone }}
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section" *ngIf="employee.address">
+      <h2>Address</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Street:</strong> {{ employee.address.street }}
+        </div>
+        <div class="info-item">
+          <strong>City:</strong> {{ employee.address.city }}
+        </div>
+        <div class="info-item">
+          <strong>State:</strong> {{ employee.address.state }}
+        </div>
+        <div class="info-item">
+          <strong>Country:</strong> {{ employee.address.country }}
+        </div>
+        <div class="info-item">
+          <strong>Postal Code:</strong> {{ employee.address.postalCode }}
+        </div>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <h2>Notes</h2>
+      
+      <div class="note-form">
+        <textarea
+          [(ngModel)]="newNoteContent"
+          placeholder="Add a note about this employee..."
+          rows="4"
+          class="note-textarea"
+          [disabled]="submittingNote"
+        ></textarea>
+        <button
+          (click)="submitNote()"
+          [disabled]="!newNoteContent.trim() || submittingNote"
+          class="submit-note-btn"
+        >
+          {{ submittingNote ? 'Adding...' : 'Add Note' }}
+        </button>
+      </div>
+
+      <div *ngIf="loadingNotes" class="loading-notes">Loading notes...</div>
+
+      <div *ngIf="!loadingNotes && notes.length === 0" class="no-notes">
+        No notes yet. Add one above!
+      </div>
+
+      <div *ngIf="!loadingNotes && notes.length > 0" class="notes-list">
+        <div *ngFor="let note of notes" class="note-card">
+          <p class="note-content">{{ note.content }}</p>
+          <p class="note-date">{{ note.createdAt | date: 'medium' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
