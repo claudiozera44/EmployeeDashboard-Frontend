@@ -47,19 +47,12 @@ export class EmployeeDetailComponent implements OnInit {
 
   loadEmployee(id: string): void {
     this.loading = true;
-    console.log('Loading employee with ID:', id);
     this.employeeService.getEmployees().subscribe({
       next: (employees) => {
-        console.log('Received employees count:', employees.length);
-        console.log('Looking for employee with ID:', id);
-        console.log('First employee ID:', employees.length > 0 ? employees[0].id : 'none');
         this.employee = employees.find(emp => emp.id === id) || null;
         this.loading = false;
         if (!this.employee) {
-          console.log('Employee not found! ID:', id);
           this.error = 'Employee not found';
-        } else {
-          console.log('Employee found:', this.employee.firstName, this.employee.lastName);
         }
       },
       error: (err) => {
