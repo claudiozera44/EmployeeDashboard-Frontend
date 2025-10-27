@@ -1,11 +1,12 @@
 .navbar {
-  background: #4CAF50;
-  color: white;
+  background: white;
+  color: #333;
   padding: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .nav-container {
@@ -17,10 +18,24 @@
   align-items: center;
 }
 
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-logo {
+  height: 45px;
+  width: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
 .nav-title {
   margin: 0;
   font-size: 24px;
   font-weight: 600;
+  color: #333;
 }
 
 .nav-links {
@@ -29,7 +44,8 @@
 }
 
 .nav-links a {
-  color: white;
+  background: #03DAC5;
+  color: #FFFFFF;
   text-decoration: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -38,9 +54,15 @@
 }
 
 .nav-links a:hover {
-  background: rgba(255, 255, 255, 0.2);
+  color: #08D8C3;
+  background: #FFFFFF;
+  border: 2px solid;
+  border-color: #08D8C3;
+  border-width: 2px !important;
 }
 
 .nav-links a.active {
-  background: rgba(255, 255, 255, 0.3);
+  background: #0399AB;
+  color: #FFFFFF;
+  border-color: #0399AB;
 }
