@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { Employee } from '../../models/employee.model';
 import { EmployeeService } from '../../services/employee.service';
 import { FavoritesService } from '../../services/favorites.service';
@@ -11,45 +12,60 @@ import { FavoritesService } from '../../services/favorites.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './employee-list.component.html',
-  styleUrls: ['./employee-list.component.css']
+  styleUrls: ['./employee-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EmployeeListComponent implements OnInit {
+export class EmployeeListComponent implements OnInit, OnDestroy {
   employees: Employee[] = [];
   filteredEmployees: Employee[] = [];
   searchTerm: string = '';
   loading: boolean = true;
   error: string = '';
   favorites: Set<string> = new Set();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private employeeService: EmployeeService,
     private favoritesService: FavoritesService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadEmployees();
-    this.favoritesService.favorites$.subscribe(favorites => {
-      this.favorites = favorites;
-    });
+    this.favoritesService.favorites$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(favorites => {
+        this.favorites = favorites;
+        this.cdr.markForCheck();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadEmployees(): void {
     this.loading = true;
     this.error = '';
     
-    this.employeeService.getEmployees().subscribe({
-      next: (data) => {
-        this.employees = data;
-        this.filteredEmployees = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load employees. Please try again later.';
-        this.loading = false;
-        console.error('Error loading employees:', err);
-      }
-    });
+    this.employeeService.getEmployees()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.employees = data;
+          this.filteredEmployees = data;
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          this.error = 'Failed to load employees. Please try again later.';
+          this.loading = false;
+          this.cdr.markForCheck();
+          console.error('Error loading employees:', err);
+        }
+      });
   }
 
   onSearchChange(): void {
